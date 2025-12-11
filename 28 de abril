@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Contador desde 28-04-2024</title>
+  <style>
+    :root{
+      --bg:#0f1724; --card:#071127; --accent:#55c1ff; --glass: rgba(255,255,255,0.04);
+      --radius:18px; --glass-2: rgba(255,255,255,0.02);
+      --fw-strong:700; --fw-medium:500;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; min-height:100vh; display:grid; place-items:center; font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; background: radial-gradient(1200px 600px at 10% 10%, rgba(85,193,255,0.08), transparent), radial-gradient(900px 400px at 90% 90%, rgba(136,83,255,0.06), transparent), var(--bg); color:#e6eef8;
+      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+    }
+    .card{
+      width:min(920px, 94vw); background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border-radius:var(--radius); padding:28px; box-shadow: 0 8px 30px rgba(2,6,23,0.6); border:1px solid rgba(255,255,255,0.04);
+      display:grid; grid-template-columns: 1fr 360px; gap:22px; align-items:center;
+    }
+    @media (max-width:880px){ .card{ grid-template-columns: 1fr; } }
+    .title{
+      display:flex; gap:14px; align-items:center;
+    }
+    .logo{
+      width:68px; height:68px; border-radius:12px; background:linear-gradient(135deg,var(--accent), #8866ff); display:grid; place-items:center; font-weight:800; font-size:20px; color:#021226; box-shadow: 0 6px 18px rgba(85,193,255,0.08);
+    }
+    h1{ margin:0; font-size:20px; letter-spacing:-0.2px; }
+    p.lead{ margin:6px 0 18px 0; color: #cfecff; opacity:0.9 }
+
+    .big-counter{
+      display:flex; gap:10px; align-items:baseline; flex-wrap:wrap;
+    }
+    .big-counter .big{
+      font-size:48px; font-weight:700; color:var(--accent);
+    }
+    .breakdown{
+      display:flex; gap:10px; flex-wrap:wrap; margin-top:8px;
+    }
+    .pill{ background:linear-gradient(180deg,var(--glass), var(--glass-2)); padding:10px 14px; border-radius:12px; border:1px solid rgba(255,255,255,0.03); min-width:88px; text-align:center; }
+    .pill strong{ display:block; font-size:20px; font-weight:700 }
+    .pill small{ display:block; margin-top:4px; color:#a9cfe8 }
+
+    .right{
+      padding:18px; border-radius:12px; background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.01)); border:1px solid rgba(255,255,255,0.03);
+    }
+    .meta{ font-size:13px; color:#bfe6ff; opacity:0.9 }
+    .controls{ margin-top:14px; display:flex; gap:8px; flex-wrap:wrap }
+    .btn{ padding:8px 12px; border-radius:10px; background:transparent; border:1px solid rgba(255,255,255,0.04); cursor:pointer; font-weight:600 }
+    .btn.ghost{ background:transparent }
+    .btn.primary{ background: linear-gradient(90deg,var(--accent), #8866ff); border:none; color:#021226 }
+    .small{ font-size:12px; opacity:0.9 }
+    footer{ margin-top:16px; font-size:13px; color:#98cfe8; opacity:0.8 }
+
+    .muted{ color:#9fcff0; opacity:0.9 }
+  </style>
+</head>
+<body>
+  <main class="card" role="main">
+    <section>
+      <div class="title">
+        <div class="logo">28</div>
+        <div>
+          <h1>Contador desde <span class="muted">28 de abril de 2024</span></h1>
+          <p class="lead">Mide el tiempo transcurrido desde las 00:00 (UTC-03:00) en Buenos Aires — actualizado en tiempo real.</p>
+        </div>
+      </div>
+
+      <div style="margin-top:16px">
+        <div class="big-counter">
+          <div class="big" id="yearsMonths">0 años • 0 meses</div>
+          <div style="font-size:18px; color:#cfefff" id="sinceHuman">0 días, 0:00:00</div>
+        </div>
+
+        <div class="breakdown" id="breakdown">
+          <div class="pill"><strong id="days">0</strong><small>Días</small></div>
+          <div class="pill"><strong id="hours">0</strong><small>Horas</small></div>
+          <div class="pill"><strong id="minutes">0</strong><small>Minutos</small></div>
+          <div class="pill"><strong id="seconds">0</strong><small>Segundos</small></div>
+        </div>
+
+        <div style="margin-top:12px; display:flex; gap:12px; align-items:center; flex-wrap:wrap">
+          <div class="meta">Total transcurrido: <span id="totalDays">0</span> días (con decimales)</div>
+        </div>
+      </div>
+    </section>
+
+    <aside class="right">
+      <div class="meta">Fecha de inicio exacta:</div>
+      <div style="font-weight:700; margin-top:6px">28 abril 2024 — 00:00:00 (UTC-03:00)</div>
+
+      <div class="controls">
+        <button class="btn primary" id="copyBtn">Copiar enlace al portapapeles</button>
+        <button class="btn" id="downloadBtn">Descargar HTML</button>
+        <button class="btn ghost" id="toggleFormat">Mostrar formato: Días totales</button>
+      </div>
+
+      <footer>
+        <div style="font-weight:600">Cómo usar</div>
+        <div style="margin-top:8px">Guarda este archivo como <code>contador_desde_2024-04-28.html</code> y ábrelo en tu navegador. Funciona offline.</div>
+      </footer>
+    </aside>
+  </main>
+
+  <script>
+    // Fecha de inicio en zona UTC-03:00 (Buenos Aires) a las 00:00:00 del 28-04-2024
+    const start = new Date('2024-04-28T00:00:00-03:00');
+    const daysEl = document.getElementById('days');
+    const hoursEl = document.getElementById('hours');
+    const minutesEl = document.getElementById('minutes');
+    const secondsEl = document.getElementById('seconds');
+    const totalDaysEl = document.getElementById('totalDays');
+    const sinceHumanEl = document.getElementById('sinceHuman');
+    const yearsMonthsEl = document.getElementById('yearsMonths');
+
+    let showTotalDays = false;
+
+    function diffParts(from, to){
+      // Devuelve {years, months, days, hours, minutes, seconds}
+      // Para años/meses hacemos una diferencia por componentes
+      let y1 = from.getFullYear(), m1 = from.getMonth(), d1 = from.getDate();
+      let y2 = to.getFullYear(), m2 = to.getMonth(), d2 = to.getDate();
+
+      let years = y2 - y1;
+      let months = m2 - m1;
+      let days = d2 - d1;
+
+      if(days < 0){
+        // restamos 1 mes
+        months -= 1;
+        // obtengo días del mes anterior relativo a "to"
+        const prevMonth = new Date(to.getFullYear(), to.getMonth(), 0); // último día mes anterior
+        days += prevMonth.getDate();
+      }
+      if(months < 0){ months += 12; years -= 1 }
+
+      // ahora las horas/mins/segundos exactas usando tiempo en ms
+      const middayFrom = new Date(from.getFullYear(), from.getMonth(), from.getDate());
+      const middayTo = new Date(to.getFullYear(), to.getMonth(), to.getDate());
+      // diferencia entre las fechas truncadas a medianoche para horas/mins del día actual
+      const msSinceMidnight = to - new Date(to.getFullYear(), to.getMonth(), to.getDate());
+      const hours = Math.floor(msSinceMidnight / (1000 * 60 * 60));
+      const minutes = Math.floor(msSinceMidnight / (1000 * 60)) % 60;
+      const seconds = Math.floor(msSinceMidnight / 1000) % 60;
+
+      return { years, months, days, hours, minutes, seconds };
+    }
+
+    function update(){
+      const now = new Date();
+      const ms = now - start;
+      if(ms < 0){
+        // si la fecha está en el futuro
+        daysEl.textContent = '0'; hoursEl.textContent='0'; minutesEl.textContent='0'; secondsEl.textContent='0';
+        totalDaysEl.textContent = '0';
+        sinceHumanEl.textContent = 'Aún no empezó';
+        yearsMonthsEl.textContent = '0 años • 0 meses';
+        return;
+      }
+
+      const totalSeconds = Math.floor(ms / 1000);
+      const totalMinutes = Math.floor(totalSeconds / 60);
+      const totalHours = Math.floor(totalMinutes / 60);
+      const totalDays = ms / (1000 * 60 * 60 * 24);
+
+      // breakdown días/h/m/s
+      const days = Math.floor(totalDays);
+      const hours = Math.floor((totalHours) % 24);
+      const minutes = Math.floor((totalMinutes) % 60);
+      const seconds = Math.floor(totalSeconds % 60);
+
+      daysEl.textContent = days.toLocaleString();
+      hoursEl.textContent = hours.toString().padStart(2,'0');
+      minutesEl.textContent = minutes.toString().padStart(2,'0');
+      secondsEl.textContent = seconds.toString().padStart(2,'0');
+      totalDaysEl.textContent = totalDays.toFixed(6);
+      sinceHumanEl.textContent = `${days.toLocaleString()} días, ${hours.toString().padStart(2,'0')}:${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`;
+
+      const parts = diffParts(start, now);
+      yearsMonthsEl.textContent = `${parts.years} año${parts.years!==1?'s':''} • ${parts.months} mes${parts.months!==1?'es':''}`;
+    }
+
+    // primer update inmediato
+    update();
+    // actualizar cada 250ms para mantener decimales fluidos
+    setInterval(update, 250);
+
+    // controles: copiar y descargar
+    document.getElementById('copyBtn').addEventListener('click', async ()=>{
+      try{
+        await navigator.clipboard.writeText(location.href);
+        alert('Enlace copiado al portapapeles.');
+      }catch(e){
+        alert('No se pudo copiar el enlace. Intenta manualmente.');
+      }
+    });
+
+    document.getElementById('downloadBtn').addEventListener('click', ()=>{
+      const blob = new Blob([document.documentElement.outerHTML], {type:'text/html'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'contador_desde_2024-04-28.html';
+      document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+    });
+
+    const toggle = document.getElementById('toggleFormat');
+    toggle.addEventListener('click', ()=>{
+      showTotalDays = !showTotalDays;
+      toggle.textContent = showTotalDays ? 'Mostrar formato: Años • Meses' : 'Mostrar formato: Días totales';
+      if(showTotalDays){
+        // mostrar solo total de días en el panel derecho
+        totalDaysEl.parentElement.style.display = 'block';
+      }else{
+        totalDaysEl.parentElement.style.display = 'block';
+      }
+    });
+  </script>
+</body>
+</html>
